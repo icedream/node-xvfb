@@ -1,7 +1,8 @@
 {
   "author": "Rob Wu <rob@robwu.nl> (https://robwu.nl)",
   "contributors": [
-    "ProxV, Inc. <support@proxv.com> (http://proxv.com)"
+    "ProxV, Inc. <support@proxv.com> (http://proxv.com)",
+    "Carl Kittelberger <icedream2k9@die-optimisten.net>"
   ],
   "name": "xvfb",
   "description": "Easily start and stop an X Virtual Frame Buffer from your node apps.",
