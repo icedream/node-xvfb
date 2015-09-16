@@ -13,11 +13,10 @@ function Xvfb(options) {
   this._timeout = options.timeout || 500;
   this._silent = options.silent;
   this._xvfb_args = options.xvfb_args || [];
+  this._detached = options.detached || false;
 }
 
 Xvfb.prototype = {
-  detached: false,
-
   start: function(cb) {
     if (!this._process) {
       var lockFile = this._lockFile();
@@ -126,7 +125,7 @@ Xvfb.prototype = {
         throw new Error('Display ' + display + ' is already in use and the "reuse" option is false.');
       }
     } else {
-      this._process = spawn('Xvfb', [ display ].concat(this._xvfb_args), { detached: this.detached || false });
+      this._process = spawn('Xvfb', [ display ].concat(this._xvfb_args), { detached: this._detached || false });
       this._process.stderr.on('data', function(data) {
         if (!this._silent) {
           process.stderr.write(data);
