@@ -1,7 +1,7 @@
 var fs = require('fs');
 var path = require('path');
 var spawn = require('child_process').spawn;
-var usleep = require('sleep').usleep;
+var sync = require('sync');
 fs.exists = fs.exists || path.exists;
 fs.existsSync = fs.existsSync || path.existsSync;
 
@@ -58,27 +58,9 @@ Xvfb.prototype = {
   },
 
   startSync: function() {
-    if (!this._process) {
-      var lockFile = this._lockFile();
-
-      this._setDisplayEnvVariable();
-      this._spawnProcess(fs.existsSync(lockFile), function(e) {
-        // Ignore async spawn error. While usleep is active, tasks on the
-        // event loop cannot be executed, so spawn errors will never be
-        // received during the startSync call.
-      });
-
-      var totalTime = 0;
-      while (!fs.existsSync(lockFile)) {
-        if (totalTime > this._timeout) {
-          throw new Error('Could not start Xvfb.');
-        }
-        usleep(10000);
-        totalTime += 10;
-      }
-    }
-
-    return this._process;
+    sync(function() {
+      this.start.sync(this);
+    });
   },
 
   stop: function(cb) {
@@ -108,20 +90,9 @@ Xvfb.prototype = {
   },
 
   stopSync: function() {
-    if (this._process) {
-      this._killProcess();
-      this._restoreDisplayEnvVariable();
-
-      var lockFile = this._lockFile();
-      var totalTime = 0;
-      while (fs.existsSync(lockFile)) {
-        if (totalTime > this._timeout) {
-          throw new Error('Could not stop Xvfb.');
-        }
-        usleep(10000);
-        totalTime += 10;
-      }
-    }
+    sync(function() {
+      this.stop.sync(this);
+    });
   },
 
   display: function() {
